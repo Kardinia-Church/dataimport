@@ -44,6 +44,8 @@ var GROUP_POSITION = 'Position'; //'Event Title';
 var GROUP_CONTACT_FIRST_NAME = 'First Name';
 var GROUP_CONTACT_LAST_NAME = 'Last Name';
 var GROUP_CONTACT_DOB = 'Date of Birth';
+var GROUP_CONTACT_PHONE_NUMBER = 'Mobile Number';
+var GROUP_CONTACT_EMAIL_ADDRESS = 'Email Address';
 var GROUP_CONTACT_GENDER = 'Gender';
 
 
@@ -769,58 +771,90 @@ function importGroupMembers(group, defaultRealm, next) {
         var gender = _.get(member, GROUP_CONTACT_GENDER);
         var position = _.get(member, GROUP_POSITION);
 
-        // //Keys for groups import data
-        // var GROUP_EXTERNAL_ID = 'Group';
-        // var GROUP_CONTACT_EXTERNAL_ID = 'Member ID'; //This should resolve to a unique id, (breeze id, or elvanto member id)
-        // var GROUP_TITLE = 'Group'; //'Event Title';
-        // var GROUP_POSITION = 'Position'; //'Event Title';
-        // var GROUP_CONTACT_FIRST_NAME = 'First Name';
-        // var GROUP_CONTACT_LAST_NAME = 'Last Name';
-        // var GROUP_CONTACT_DOB = 'Date of Birth';
-        // var GROUP_CONTACT_GENDER = 'Gender';
+        var phoneNumbers = _.compact([_.get(member, GROUP_CONTACT_PHONE_NUMBER)]);
+        var emails = _.compact([_.get(member, GROUP_CONTACT_EMAIL_ADDRESS)]);
+
 
         var contactData = {
             firstName,
             lastName,
             dob: dobFormatted ? new Date(dobFormatted) : undefined,
             gender,
+            status: 'draft',
+            phoneNumbers: phoneNumbers,
+            emails: emails,
             _type: 'contact',
             realms: [defaultRealm],
             _external: contactExternalID,
         }
+
+        if (!contactData.phoneNumbers.length && !contactData.emails.length) {
+            contactData.status = 'draft';
+        }
+
+        console.log(contactData);
 
         return findOrCreate(contactExternalID, contactData, null, function(err, contactID) {
             if (err) {
                 return next();
             }
 
-            //Add the contact to the provisional members
-            if (!position || !position.length) {
-                newGroup.provisionalMembers.push(contactID);
-                return next();
-            }
+            //Ensure the contact is correct
+            fluro.api.get("/content/contact/" + contactID, {}).then((result) => {
+                var update = {};
+                if(result.data.status == "archived"){update["status"] = "draft";}
+                if(result.data.emails.length <= 0){update["emails"] = contactData.emails;}
+                if(result.data.gender == "unknown"){update["gender"] = contactData.gender;}
+                if(result.data.phoneNumbers.length <= 0){update["phoneNumbers"] = contactData.phoneNumbers;}
+                if(result.data.dob === undefined){update["dob"] = contactData.dob;}
+                console.log("Updating contact fields: ");
+                console.log(update);
 
-            //Add the contact to the relevant assignment row
-            var positionKey = _.camelCase(position);
-            if (!assignmentRows[positionKey]) {
-                assignmentRows[positionKey] = {
-                    title: position,
-                    contacts: [],
+                //Call done when we're done with editing our contact
+                var done = () => {
+                    //Add the contact to the provisional members
+                    if (!position || !position.length) {
+                        newGroup.provisionalMembers.push(contactID);
+                        return next(null, contactID);
+                    }
+
+                    //Add the contact to the relevant assignment row
+                    var positionKey = _.camelCase(position);
+                    if (!assignmentRows[positionKey]) {
+                        assignmentRows[positionKey] = {
+                            title: position,
+                            contacts: [],
+                        }
+                    }
+
+                    ////////////////////////////
+                    assignmentRows[positionKey].contacts.push(contactID);
+
+                    return next();
                 }
-            }
 
-            ////////////////////////////
-            assignmentRows[positionKey].contacts.push(contactID);
-
-            return next();
-
+                //Ok edit the contact!!
+                if(update != {}) {
+                    fluro.api.put("/content/contact/" + contactID, update).then((data) => {
+                        done();
+                    }).catch((error) => {
+                        console.log("Error updating contact to draft status: " + error);
+                    });
+                }
+                else {
+                    done();
+                }
+            }).catch((error) => {
+                console.log("Error getting the contacts information: " + error);
+            });
         });
 
 
         // //Use the fluro event id
         // checkinData.event = eventID;
         // return importCheckin(checkinData, defaultRealm, next);
-    }, function(err, results) {
+    },
+    function(err, results) {
         if (err) {
             return next(err);
         }
