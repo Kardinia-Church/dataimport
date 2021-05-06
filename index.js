@@ -792,8 +792,6 @@ function importGroupMembers(group, defaultRealm, next) {
             contactData.status = 'draft';
         }
 
-        console.log(contactData);
-
         return findOrCreate(contactExternalID, contactData, null, function(err, contactID) {
             if (err) {
                 return next();
@@ -801,6 +799,7 @@ function importGroupMembers(group, defaultRealm, next) {
 
             //Ensure the contact is correct
             fluro.api.get("/content/contact/" + contactID, {}).then((result) => {
+                console.log(contactData);
                 var update = {};
                 if(result.data.status == "archived"){update["status"] = "draft";}
                 if(result.data.emails.length <= 0){update["emails"] = contactData.emails;}
