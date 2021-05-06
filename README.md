@@ -1,3 +1,5 @@
+# Elvanto to Flurio Data Importer
+This project is forked from [fluro-developers/dataimport](https://github.com/fluro-developers/dataimport) with modifications for our specific import requirements
 
 # Data Import 
 Requires NodeJS 

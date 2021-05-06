@@ -765,6 +765,7 @@ function importGroupMembers(group, defaultRealm, next) {
         var firstName = _.get(member, GROUP_CONTACT_FIRST_NAME);
         var lastName = _.get(member, GROUP_CONTACT_LAST_NAME);
         var dob = _.get(member, GROUP_CONTACT_DOB);
+        var dobFormatted = dob.split("/")[1] + "/" + dob.split("/")[0] + "/" + dob.split("/")[2]; //Format from aus to us format
         var gender = _.get(member, GROUP_CONTACT_GENDER);
         var position = _.get(member, GROUP_POSITION);
 
@@ -781,13 +782,12 @@ function importGroupMembers(group, defaultRealm, next) {
         var contactData = {
             firstName,
             lastName,
-            dob: dob ? new Date(dob) : undefined,
+            dob: dobFormatted ? new Date(dobFormatted) : undefined,
             gender,
             _type: 'contact',
             realms: [defaultRealm],
             _external: contactExternalID,
         }
-
 
         return findOrCreate(contactExternalID, contactData, null, function(err, contactID) {
             if (err) {
