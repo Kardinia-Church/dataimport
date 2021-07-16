@@ -1,3 +1,28 @@
+# Kardinia Church Modifications
+This project contains extra files for managing our specific import requirements.
+
+## Seperate CSV
+Separates a CSV file into smaller files
+
+## Convert Notes
+Converts notes exported from Elvanto into a useable format
+
+## Convert Service Attendance
+Converts individual service attendance exported from Elvanto's inbuilt ```Service Individual Attendance``` function into the correct format to be imported
+### To export
+1. Goto services/reports
+2. Export the ```Service Individual Attendance``` with the following ticked
+    * Member ID
+    * Full Name
+    * First Name
+    * Last Name
+    * Gender
+    * Date of Birth
+
+A file ```services.csv``` will also be generated this keeps track of the randomly assigned ids for each service found allowing for separation of exports. This should be deleted if a new import is being run
+
+The converted file will be outputted using append mode, this will append new records if the file exists
+
 # Elvanto to Flurio Data Importer
 This project is forked from [fluro-developers/dataimport](https://github.com/fluro-developers/dataimport) with modifications for our specific import requirements
 
@@ -25,7 +50,6 @@ Add any CSV documents you want to import into the /files folder, then run the sc
 ```
 node index.js
 ```
-
 
 
 # Data Mapping
