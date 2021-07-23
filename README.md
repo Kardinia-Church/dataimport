@@ -23,6 +23,19 @@ A file ```services.csv``` will also be generated this keeps track of the randoml
 
 The converted file will be outputted using append mode, this will append new records if the file exists
 
+## Convert Service Headcount
+Converts the service reporting (detailed) Elvanto output into data importable for headcount data.
+
+### To export
+1. Goto services/reports
+2. Export the ```Service Reporting (Detailed)``` with the following ticked
+    * Total Adults and Children in Auditorium/Cafe/Kitchen
+    * 1st Time Decisions
+    * Re-commitments
+A file ```services.csv``` will also be generated this keeps track of the randomly assigned ids for each service found allowing for separation of exports. This should be deleted if a new import is being run
+
+The converted file will be outputted using append mode, this will append new records if the file exists
+
 # Elvanto to Flurio Data Importer
 This project is forked from [fluro-developers/dataimport](https://github.com/fluro-developers/dataimport) with modifications for our specific import requirements
 
