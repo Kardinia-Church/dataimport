@@ -54,7 +54,8 @@ var HEADCOUNT_EVENT_DATE = 'Date'; //This should resolve to the date of the even
 var HEADCOUNT_EVENT_EXTERNAL_ID = 'ElvantoEventID'; //This should resolve to an id for the event
 var HEADCOUNT_EVENT_TITLE = 'Title'; //This should resolve to the title/name of the event
 var HEADCOUNT_NUMBER = 'Total'; //This should resolve to the number of people at the event
-
+var DECISIONS_NUMBER = '1stTimeDecisions'; //This should resolve to the number of first time decisions
+var RECOMMITMENTS_NUMBER = 'Recommitments'; //This should resolve to the number of recommitments
 
 //Keys for a contact
 var NOTE_CONTACT_EXTERNAL_ID = 'ElvantoMemberID'; //This should resolve to a unique id for the person, (breeze id, or elvanto member id)
@@ -487,11 +488,13 @@ function importHeadcountEvent(row, defaultRealm, next) {
 
     //Get the value for the headcount
     var headcount = _.get(row, HEADCOUNT_NUMBER) ? parseInt(_.get(row, HEADCOUNT_NUMBER)) : 0;
+    var decisions = _.get(row, DECISIONS_NUMBER) ? parseInt(_.get(row, DECISIONS_NUMBER)) : 0;
+    var recommitments = _.get(row, RECOMMITMENTS_NUMBER) ? parseInt(_.get(row, RECOMMITMENTS_NUMBER)) : 0;
 
     if (!headcount) {
+        console.log("Failed headcount");
         return next();
     }
-
 
     //Find the unique external id for the event
     var externalParentID = getExternalEventID(row, 'headcount');
@@ -537,6 +540,17 @@ function importHeadcountEvent(row, defaultRealm, next) {
                 data: {
                     imported: row,
                 },
+                areas: [
+                    {
+                        name: "1st Time Decisions",
+                        count: decisions
+                        
+                    },
+                    {
+                        name: "Re-commitments",
+                        count: recommitments
+                    }
+                ],
                 realms: [defaultRealm],
                 _external: headCountExternalID,
             }
