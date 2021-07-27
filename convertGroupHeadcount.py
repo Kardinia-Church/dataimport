@@ -1,9 +1,3 @@
-# Converts the output from Elvanto's service headcount to the correct format to be imported to Fluro
-# To export in elvanto use services/service reporting (detailed) and ensure that Total Adults and Children in Auditorium/Cafe/Kitchen, 1st Time Decisions, and Re-commitments are checked.
-
-# Warning! This will use pre existing randomly generated service ids so if you imported services using the convertServiceAttendance script ensure that the services file exported is avaliable
-# If the service is not found a new random id will be generated and added to the services file
-
 import csv
 import os
 import string
@@ -12,8 +6,9 @@ import random
 print("WARNING THERE MAY BE A BUG WHERE SERVICE IDS ARE NOT IMPORTED CORRECTLY! EXITING! (Bug should not exist in this but will need to test!)")
 exit()
 
+
 errorsAt = []
-outputRow = ["ElvantoEventID", "Date", "Title", "Total", "1stTimeDecisions", "Recommitments"]
+outputRow = ["ElvantoEventID", "Date", "Title", "Total", "People In Group"]
 
 def copyRow(resultRow, readRow, outputKeys, inputKeys, outputSearch, inputSearch):
     try:
@@ -72,28 +67,27 @@ else:
                             else:
                                 # Check if our event exists, if not add it
                                 try:
-                                    events[row[1] + " " + row[0][0:len(row[0]) - 3]] #row[0][0:len(row[0]) - 3] removes the :00 (seconds) from the output since we don't want this
+                                    events[row[0] + " " + row[1] + " 00:00"]
                                 except:
-                                    print("New service = " + row[1] + " " + row[0][0:len(row[0]) - 3])
+                                    print("New service = " + row[0] + " " + row[1] + " 00:00")
                                     randId = ''.join(random.choices(string.digits + string.digits, k = 6)) + "-" + ''.join(random.choices(string.digits + string.digits, k = 6))
-                                    events[row[1] + " " + row[0][0:len(row[0]) - 3]] = {
-                                        "date": row[0][0:len(row[0]) - 3],
+                                    events[row[0] + " " + row[1] + " 00:00"] = {
+                                        "date": row[1] + " 00:00",
                                         "randomId": randId,
-                                        "name": row[1]
+                                        "name": row[0]
                                     };
                                     with open('./files/services.csv','a', newline="") as fd:
-                                        servicesRow = [randId, row[1], row[0][0:len(row[0]) - 3]]
+                                        servicesRow = [randId, row[0], row[1] + " 00:00"]
                                         serviceWriter.writerow(servicesRow)
                                     pass
                                 
                                 # Add our row
-                                copyRow(tempRow, row, outputRow, inputRow, "Total", "Total Adults and Children in Auditorium/Cafe/Kitchen")
-                                copyRow(tempRow, row, outputRow, inputRow, "1stTimeDecisions", "1st Time Decisions")
-                                copyRow(tempRow, row, outputRow, inputRow, "Recommitments", "Re-commitments")
+                                copyRow(tempRow, row, outputRow, inputRow, "Total", "Members Attended")
+                                copyRow(tempRow, row, outputRow, inputRow, "People In Group", "People In Group")
                                 
-                                tempRow[outputRow.index("ElvantoEventID")] = events[row[1] + " " + row[0][0:len(row[0]) - 3]]["randomId"]
-                                tempRow[outputRow.index("Date")] = events[row[1] + " " + row[0][0:len(row[0]) - 3]]["date"]
-                                tempRow[outputRow.index("Title")] = events[row[1] + " " + row[0][0:len(row[0]) - 3]]["name"]
+                                tempRow[outputRow.index("ElvantoEventID")] = events[row[0] + " " + row[1] + " 00:00"]["randomId"]
+                                tempRow[outputRow.index("Date")] = events[row[0] + " " + row[1] + " 00:00"]["date"]
+                                tempRow[outputRow.index("Title")] = events[row[0] + " " + row[1] + " 00:00"]["name"]
                                 writer.writerow(tempRow)
                         rowNumber += 1
 

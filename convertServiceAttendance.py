@@ -74,6 +74,8 @@ else:
 
                                     randId = ''.join(random.choices(string.digits + string.digits, k = 6)) + "-" + ''.join(random.choices(string.digits + string.digits, k = 6))
                                     readEvents.append(eventName + " " + date)
+                                    if(firstEventColIndex == 0):
+                                        firstEventColIndex = colPosition
                                     try:
                                         events[eventName + " " + date]
                                     except:
@@ -86,8 +88,6 @@ else:
                                         with open('./files/services.csv','a', newline="") as fd:
                                             servicesRow = [randId, eventName, date]
                                             serviceWriter.writerow(servicesRow)
-                                        if(firstEventColIndex == 0):
-                                            firstEventColIndex = colPosition
                                         pass
                                 colPosition += 1
                         else:
@@ -105,6 +105,7 @@ else:
                                     
                                     #If the person has this event ticked with a Y then add the row
                                     if col == "Y":
+                                        print(readEvents[colPosition - firstEventColIndex])
                                         tempRow[outputRow.index("Event_ID")] = events[readEvents[colPosition - firstEventColIndex]]["randomId"]
                                         tempRow[outputRow.index("Meeting")] = events[readEvents[colPosition - firstEventColIndex]]["name"]
                                         tempRow[outputRow.index("Attendance_Date")] = events[readEvents[colPosition - firstEventColIndex]]["date"]

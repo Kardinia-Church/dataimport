@@ -36,6 +36,19 @@ A file ```services.csv``` will also be generated this keeps track of the randoml
 
 The converted file will be outputted using append mode, this will append new records if the file exists
 
+
+## Convert Group Headcount
+Converts the group headcount
+
+### To export
+1. Goto groups/reports
+2. Export the ```Group Reporting (Detailed)``` with the following ticked
+    * People in group
+    * Members attended
+A file ```services.csv``` will also be generated this keeps track of the randomly assigned ids for each group/service found allowing for separation of exports. This should be deleted if a new import is being run
+
+The converted file will be outputted using append mode, this will append new records if the file exists
+
 # Elvanto to Flurio Data Importer
 This project is forked from [fluro-developers/dataimport](https://github.com/fluro-developers/dataimport) with modifications for our specific import requirements
 

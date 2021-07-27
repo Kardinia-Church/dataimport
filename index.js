@@ -531,6 +531,20 @@ function importHeadcountEvent(row, defaultRealm, next) {
             return findOrCreate(externalParentID, newEvent, null, next);
         },
         function(eventID, next) {
+            var areas = [];
+            if(decisions) {
+                areas.push({
+                    name: "1st Time Decisions",
+                    count: decisions
+                    
+                });
+            }
+            if(recommitments) {
+                areas.push({
+                    name: "Re-commitments",
+                    count: recommitments
+                });
+            }
 
             var newPost = {
                 _type: 'attendance',
@@ -540,17 +554,7 @@ function importHeadcountEvent(row, defaultRealm, next) {
                 data: {
                     imported: row,
                 },
-                areas: [
-                    {
-                        name: "1st Time Decisions",
-                        count: decisions
-                        
-                    },
-                    {
-                        name: "Re-commitments",
-                        count: recommitments
-                    }
-                ],
+                areas: areas,
                 realms: [defaultRealm],
                 _external: headCountExternalID,
             }
