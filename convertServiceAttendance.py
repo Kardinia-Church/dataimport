@@ -105,7 +105,6 @@ else:
                                     
                                     #If the person has this event ticked with a Y then add the row
                                     if col == "Y":
-                                        print(readEvents[colPosition - firstEventColIndex])
                                         tempRow[outputRow.index("Event_ID")] = events[readEvents[colPosition - firstEventColIndex]]["randomId"]
                                         tempRow[outputRow.index("Meeting")] = events[readEvents[colPosition - firstEventColIndex]]["name"]
                                         tempRow[outputRow.index("Attendance_Date")] = events[readEvents[colPosition - firstEventColIndex]]["date"]
