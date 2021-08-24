@@ -17,7 +17,7 @@ else:
             with open("./files/converted_" + str(fileNumber) + ".csv", "w", newline="") as output:
                 writer = csv.writer(output)
                 writer.writerow(header)
-                for i in range(rowNumber, rowNumber + 30000):
+                for i in range(rowNumber, rowNumber + 30):
                     if(i >= len(rows)):
                         print("Done " + str(i) + " rows read and saved " + str(fileNumber) + " files")
                         exit()

@@ -9,9 +9,6 @@ import os
 import string
 import random
 
-print("WARNING THERE MAY BE A BUG WHERE SERVICE IDS ARE NOT IMPORTED CORRECTLY! EXITING! (Bug should not exist in this but will need to test!)")
-exit()
-
 errorsAt = []
 outputRow = ["ElvantoEventID", "Date", "Title", "Total", "1stTimeDecisions", "Recommitments"]
 
